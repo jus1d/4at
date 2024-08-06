@@ -556,6 +556,7 @@ fn main() -> io::Result<()> {
                 Ok(n) => {
                     if n > 0 {
                         if let Some(line) = sanitize_terminal_output(&buf[..n]) {
+                            // TODO: don't push to local char empty message
                             client.chat.push(line, Color::White)
                         }
                     } else {
