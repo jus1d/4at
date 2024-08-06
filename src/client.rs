@@ -187,6 +187,7 @@ impl ChatLog {
     }
 }
 
+#[allow(unused_macros)]
 macro_rules! chat_msg {
     ($chat:expr, $($arg:tt)*) => {
         $chat.push(format!($($arg)*), Color::White)
@@ -540,12 +541,6 @@ fn main() -> io::Result<()> {
                                 if let Some(ref mut stream) = &mut client.stream {
                                     let prompt = prompt.buffer.iter().collect::<String>();
                                     stream.write(prompt.as_bytes())?;
-                                    // TODO: don't display the message if it was not delivered
-                                    // Maybe the server should actually send your own message back.
-                                    // Not sending it back made sense in the telnet times.
-                                    if prompt.trim().len() > 0 {
-                                        chat_msg!(&mut client.chat, "{text}", text = &prompt);
-                                    }
                                 } else {
                                     chat_info!(&mut client.chat, "You are offline. Use {signature} to connect to a server.", signature = find_command("connect").expect("connect command").signature);
                                 }
@@ -564,7 +559,13 @@ fn main() -> io::Result<()> {
                 Ok(n) => {
                     if n > 0 {
                         if let Some(line) = sanitize_terminal_output(&buf[..n]) {
-                            client.chat.push(line, Color::White);
+                            // TODO: some user can just send message, that starts with 'You: ', and it
+                            // will be highlighted
+                            if line.starts_with("You: ") {
+                                client.chat.push(line, Color::Magenta)
+                            } else {
+                                client.chat.push(line, Color::White);
+                            }
                         }
                     } else {
                         client.stream = None;
