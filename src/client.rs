@@ -537,7 +537,9 @@ fn main() -> io::Result<()> {
                                     // TODO: don't display the message if it was not delivered
                                     // Maybe the server should actually send your own message back.
                                     // Not sending it back made sense in the telnet times.
-                                    chat_msg!(&mut client.chat, "{text}", text = &prompt);
+                                    if prompt.trim().len() > 0 {
+                                        chat_msg!(&mut client.chat, "{text}", text = &prompt);
+                                    }
                                 } else {
                                     chat_info!(&mut client.chat, "You are offline. Use {signature} to connect to a server.", signature = find_command("connect").expect("connect command").signature);
                                 }
@@ -556,8 +558,7 @@ fn main() -> io::Result<()> {
                 Ok(n) => {
                     if n > 0 {
                         if let Some(line) = sanitize_terminal_output(&buf[..n]) {
-                            // TODO: don't push to local char empty message
-                            client.chat.push(line, Color::White)
+                            client.chat.push(line, Color::White);
                         }
                     } else {
                         client.stream = None;
