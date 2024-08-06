@@ -305,6 +305,12 @@ impl Prompt {
         }
     }
 
+    fn delete(&mut self) {
+        if self.cursor < self.buffer.len() {
+            self.buffer.remove(self.cursor);
+        }
+    }
+
     fn before_cursor(&self) -> &[char] {
         &self.buffer[..self.cursor]
     }
@@ -498,7 +504,7 @@ fn main() -> io::Result<()> {
                             prompt.right_char();
                         }
                         KeyCode::Backspace => prompt.backspace(),
-                        // TODO: delete current character by KeyCode::Delete
+                        KeyCode::Delete => prompt.delete(),
                         // TODO: delete word by Ctrl+W
                         KeyCode::Tab => {
                             if let Some((prefix, &[])) = parse_command(prompt.before_cursor()) {
