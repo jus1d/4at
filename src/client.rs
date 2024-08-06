@@ -329,6 +329,12 @@ impl Prompt {
             self.buffer.pop();
         }
     }
+
+    fn delete_word(&mut self) {
+        while self.at_cursor().is_alphabetic() {
+            self.buffer.remove(self.cursor);
+        }
+    }
 }
 
 #[derive(Default)]
@@ -486,6 +492,7 @@ fn main() -> io::Result<()> {
                             match x {
                                 'c' => client.quit = true,
                                 'k' => prompt.delete_until_end(),
+                                'w' => prompt.delete_word(),
                                 _ => {}
                             }
                         } else {
@@ -505,7 +512,6 @@ fn main() -> io::Result<()> {
                         }
                         KeyCode::Backspace => prompt.backspace(),
                         KeyCode::Delete => prompt.delete(),
-                        // TODO: delete word by Ctrl+W
                         KeyCode::Tab => {
                             if let Some((prefix, &[])) = parse_command(prompt.before_cursor()) {
                                 let prefix = prefix.iter().collect::<String>();
