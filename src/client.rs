@@ -559,8 +559,7 @@ fn main() -> io::Result<()> {
                 Ok(n) => {
                     if n > 0 {
                         if let Some(line) = sanitize_terminal_output(&buf[..n]) {
-                            // TODO: some user can just send message, that starts with 'You: ', and it
-                            // will be highlighted
+                            // TODO: some user can just send message, that starts with 'You: ', and it will be highlighted as your
                             if line.starts_with("You: ") {
                                 client.chat.push(line, Color::Magenta)
                             } else {
